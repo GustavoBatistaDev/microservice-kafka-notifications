@@ -1,24 +1,12 @@
 import { IsendMail } from "interfaces/sendMail.interface";
 import { kafkaConsumer } from "../consumer";
 import { SendMailService } from "../../../../services/sendMail.service";
-import {
-  ICreateTokenJwtService,
-  PayloadJwt,
-} from "../../../../interfaces/createTokenJwt.interface";
+import { ICreateTokenJwtService } from "../../../../interfaces/createTokenJwt.interface";
 import { CreateTokenJwtService } from "../../../../services/createTokenJwt.service";
 import { IsendMessageWhatsapp } from "../../../../interfaces/sendMessageWhatsapp.interface";
 import { SendMessageWhatsappService } from "../../../../services/sendMessageWhatsapp.service";
-
-type NotificationEmail = {
-  email: string;
-  payloadJwt: PayloadJwt;
-  url: string;
-};
-
-type NotificationWhatsapp = {
-  message: string;
-  phone: string;
-};
+import { NotificationEmail } from "../../../../types/notificationEmail.type";
+import { NotificationWhatsapp } from "../../../../types/notificationWhatsapp.type";
 
 export class NotificationConsumerVerifyEmail {
   constructor(
@@ -27,7 +15,6 @@ export class NotificationConsumerVerifyEmail {
   ) {}
 
   public createNotificationConsumer = async () => {
-    console.log("CONSUMER NOTIFICATION EMAIL");
     const consumer = await kafkaConsumer(
       "notification-email",
       "verify-password",
@@ -63,7 +50,6 @@ export class NotificationConsumerChangePassword {
   ) {}
 
   public createNotificationConsumer = async () => {
-    console.log("CONSUMER NOTIFICATION EMAIL CHANGE PASSWORD");
     const consumer = await kafkaConsumer(
       "notification-email-change-password",
       "change-password",
@@ -101,7 +87,6 @@ export class NotificationConsumerScheduledAppointment {
   ) {}
 
   public createNotificationConsumer = async () => {
-    console.log("CONSUMER NOTIFICATION WHATSAPP");
     const consumer = await kafkaConsumer(
       "notification-whatsapp",
       "notification-whatsapp-scheduled-appointment",
