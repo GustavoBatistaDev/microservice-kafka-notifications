@@ -6,11 +6,18 @@ import {
   PayloadJwt,
 } from "../../../../interfaces/createTokenJwt.interface";
 import { CreateTokenJwtService } from "../../../../services/createTokenJwt.service";
+import { IsendMessageWhatsapp } from "../../../../interfaces/sendMessageWhatsapp.interface";
+import { SendMessageWhatsappService } from "../../../../services/sendMessageWhatsapp.service";
 
 type NotificationEmail = {
   email: string;
   payloadJwt: PayloadJwt;
   url: string;
+};
+
+type NotificationWhatsapp = {
+  message: string;
+  phone: string;
 };
 
 export class NotificationConsumerVerifyEmail {
@@ -88,6 +95,39 @@ export class NotificationConsumerChangePassword {
   };
 }
 
+export class NotificationConsumerScheduledAppointment {
+  constructor(
+    private readonly sendMessageWhatsAppService: IsendMessageWhatsapp,
+  ) {}
+
+  public createNotificationConsumer = async () => {
+    console.log("CONSUMER NOTIFICATION WHATSAPP");
+    const consumer = await kafkaConsumer(
+      "notification-whatsapp",
+      "notification-whatsapp-scheduled-appointment",
+    );
+
+    await consumer.run({
+      eachMessage: async ({ message }) => {
+        try {
+          const messageToString = message.value!.toString();
+          const messageObject = JSON.parse(
+            messageToString,
+          ) as NotificationWhatsapp;
+          console.log(messageObject);
+
+          await this.sendMessageWhatsAppService.sendMessage(
+            messageObject.phone,
+            messageObject.message,
+          );
+        } catch (error) {
+          console.log(error);
+        }
+      },
+    });
+  };
+}
+
 const sendMailServiceInstance = new SendMailService();
 const createTokenJwtService = new CreateTokenJwtService();
 
@@ -105,3 +145,10 @@ const notificationChangePassword = new NotificationConsumerChangePassword(
 );
 
 notificationChangePassword.createNotificationConsumer();
+
+const sendMessageWhatsappService = new SendMessageWhatsappService();
+
+const notificationConsumerScheduledAppointment =
+  new NotificationConsumerScheduledAppointment(sendMessageWhatsappService);
+
+notificationConsumerScheduledAppointment.createNotificationConsumer();
