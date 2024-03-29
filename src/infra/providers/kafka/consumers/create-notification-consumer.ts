@@ -33,7 +33,7 @@ export class NotificationConsumerVerifyEmail {
           this.sendMailService.sendMessage(
             messageObject.email,
             "Verificação de email",
-            `${process.env.SERVER_EXPRESS_PROTOCOL}://${process.env.SERVER_EXPRESS_HOST}:${process.env.SERVER_EXPRESS_MICROSERVICE_SCHEDULING_PORT}${messageObject.url}?token=${token}`,
+            `${process.env.SERVER_FRONTEND_PROTOCOL}://${process.env.SERVER_FRONTEND_HOST}:${process.env.SERVER_FRONTEND_PORT}${messageObject.url}?token=${token}`,
           );
         } catch (error) {
           console.log(error);
@@ -67,11 +67,10 @@ export class NotificationConsumerChangePassword {
             process.env.JWT_SECRETY_KEY!,
           );
 
-          console.log(messageObject);
           this.sendMailService.sendMessage(
             messageObject.email,
             "Alteração de senha",
-            `${process.env.SERVER_EXPRESS_PROTOCOL}://${process.env.SERVER_EXPRESS_HOST}:${process.env.SERVER_EXPRESS_MICROSERVICE_SCHEDULING_PORT}${messageObject.url}${token}`,
+            `${process.env.SERVER_FRONTEND_PROTOCOL}://${process.env.SERVER_FRONTEND_HOST}:${process.env.SERVER_FRONTEND_PORT}${messageObject.url}${token}`,
           );
         } catch (error) {
           console.log(error);

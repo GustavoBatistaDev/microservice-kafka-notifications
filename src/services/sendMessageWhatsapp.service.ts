@@ -1,26 +1,32 @@
 import { IsendMessageWhatsapp } from "../interfaces/sendMessageWhatsapp.interface";
+import axios from "axios";
+import qs from "qs";
 
 export class SendMessageWhatsappService implements IsendMessageWhatsapp {
   async sendMessage(phone: string, message: string): Promise<void> {
     const GZAPPY_URL = process.env.API_WHATSAPP_ENDPOINT as string;
 
-    const response = await fetch(GZAPPY_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        user_token_id: process.env.USER_TOKEN_ID as string,
-      },
-      body: JSON.stringify({
-        instance_id: process.env.INSTANCE_ID,
-        instance_token: process.env.WHATSAPP_CREDENTIALS,
-        message: [message.replace(/\s+/g, " ")],
-        phone: `55${phone}`,
-      }),
+    const data = qs.stringify({
+      token: process.env.USER_TOKEN_ID,
+      to: "+55" + "73988246869",
+      body: [message.replace(/\s+/g, " ")],
     });
 
-    const data = await response.json();
+    const config = {
+      method: "post",
+      url: GZAPPY_URL,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: data,
+    };
 
-    console.log(data);
-    // { msg: 'Messages sent' }
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
 }
